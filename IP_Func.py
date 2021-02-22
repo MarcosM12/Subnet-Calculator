@@ -21,12 +21,13 @@ def check_IP_addr(addr):
         for item in octets:
             try:
                 if first_oct is True:
-                    if not 1 <= int(item) <= 126 \
+                    if 1 <= int(item) <= 126 \
                             or (128 <= int(item) <= 191 and (int(item) != 169 or int(octets[1]) != 254))\
                             or 192 <= int(item) <= 223:
-                        return 'Invalid IP address (must be unicast address)'
-                    else:
                         first_oct = False
+                    else:
+                        return 'Invalid IP address (must be unicast address)'
+
                 else:
                     if not 0 <= int(item) <= 255:
                         return 'Invalid IP address (Octet: ' + str(item) + ' must be between: 0 and 255)'
@@ -174,3 +175,5 @@ def calc_max_subnets(submask):
     submask_bin = convert_to_binary(subnet_part)
     n_ones_submask = submask_bin.count('1')
     return 2 ** n_ones_submask
+
+

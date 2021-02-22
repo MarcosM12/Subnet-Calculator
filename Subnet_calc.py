@@ -60,8 +60,6 @@ def create_gui():
     window = sg.Window(title="Subnet Calculator", layout=layout, margins=(100, 20), font=('Verdana', 12), finalize=True)
     window['IP'].Widget.configure(highlightcolor='red', highlightthickness=1)
     window['sub_mask'].Widget.configure(highlightcolor='red', highlightthickness=1)
-    #window['max_subnets'].Widget.configure(highlightcolor='red', highlightthickness=1)
-
     return window
 
 
@@ -73,31 +71,40 @@ def subnet_calc():
         # End program if user closes window
         if event == sg.WIN_CLOSED:
             break
-        #Update first octet range based on the network class
-        #Then, generate a random ip address that is part of this same class
-        if event == 'class_A':
-            window.Element('First_Oct_Range').Update(IP_Func.update_oct_range('A'))
-        elif event == 'class_B':
-            window.Element('First_Oct_Range').Update(IP_Func.update_oct_range('B'))
-        elif event == 'class_C':
-            window.Element('First_Oct_Range').Update(IP_Func.update_oct_range('C'))
 
-        if event == "Calculate" or 'n_hosts':
+        if event == "Calculate" or 'n_hosts' or 'class_A':
+            # Update first octet range based on the network class
+            if event == 'class_A':
+                window.Element('First_Oct_Range').Update(IP_Func.update_oct_range('A'))
+                values['IP'] = "1.0.0.1"
+                window.Element('IP').Update(values['IP'])
+            elif event == 'class_B':
+                window.Element('First_Oct_Range').Update(IP_Func.update_oct_range('B'))
+                values['IP'] = "172.0.0.1"
+                window.Element('IP').Update(values['IP'])
+            elif event == 'class_C':
+                window.Element('First_Oct_Range').Update(IP_Func.update_oct_range('C'))
+                values['IP'] = "192.168.0.1"
+                window.Element('IP').Update(values['IP'])
+
             if IP_Func.check_IP_addr(values['IP']) is not None:
                 print(IP_Func.check_IP_addr(values['IP']))
+                continue
             else:
                 window.Element('HexIP').Update(IP_Func.convert_to_hex(values['IP']))  # Convert ip address to hexadecimal notation
 
+            if event == 'n_hosts':  # Update subnet_mask for this number of hosts
+                values['sub_mask'] = IP_Func.update_submask('number_hosts', values['n_hosts'])
+                window.Element('sub_mask').Update(values['sub_mask'])
+
+            if event == 'max_subnets':
+                values['sub_mask'] = IP_Func.update_submask('maximum_subnets', values['max_subnets'])
+                window.Element('sub_mask').Update(values['sub_mask'])
+
             if IP_Func.check_submask(values['sub_mask']) is not None:
                 print(IP_Func.check_submask(values['sub_mask']))
+                continue
             else:
-                if event == 'n_hosts': #Update subnet_mask for this number of hosts
-                    values['sub_mask'] = IP_Func.update_submask('number_hosts',values['n_hosts'])
-                    window.Element('sub_mask').Update(values['sub_mask'])
-
-                if event == 'max_subnets':
-                    values['sub_mask'] = IP_Func.update_submask('maximum_subnets', values['max_subnets'])
-                    window.Element('sub_mask').Update(values['sub_mask'])
 
                 window.Element('w_mask').Update(IP_Func.calc_wildcard(values['sub_mask']))  # Calculate wildcard mask using valid subnet mask
                 window.Element('n_hosts').Update(IP_Func.calc_number_hosts(values['sub_mask'])) # Calculate number of hosts using valid subnet mask
