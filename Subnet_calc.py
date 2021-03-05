@@ -91,9 +91,11 @@ def subnet_calc():
                 print(IP_Func.check_IP_addr(values['IP']))
                 continue
             else:
-                window.Element('HexIP').Update(IP_Func.convert_to_hex(values['IP']))  # Convert ip address to hexadecimal notation
+                # Convert ip address to hexadecimal notation
+                window.Element('HexIP').Update(IP_Func.convert_to_hex(values['IP']))
 
-            if event == 'n_hosts':  # Update subnet_mask for this number of hosts
+            if event == 'n_hosts':
+                # Update subnet_mask for this number of hosts
                 values['sub_mask'] = IP_Func.update_submask('number_hosts', values['n_hosts'])
                 window.Element('sub_mask').Update(values['sub_mask'])
 
@@ -105,9 +107,10 @@ def subnet_calc():
                 print(IP_Func.check_submask(values['sub_mask']))
                 continue
             else:
-
-                window.Element('w_mask').Update(IP_Func.calc_wildcard(values['sub_mask']))  # Calculate wildcard mask using valid subnet mask
-                window.Element('n_hosts').Update(IP_Func.calc_number_hosts(values['sub_mask'])) # Calculate number of hosts using valid subnet mask
+                # Calculate wildcard mask using valid subnet mask
+                window.Element('w_mask').Update(IP_Func.calc_wildcard(values['sub_mask']))
+                # Calculate number of hosts using valid subnet mask
+                window.Element('n_hosts').Update(IP_Func.calc_number_hosts(values['sub_mask']))
                 window.Element('broad_addr').Update(IP_Func.calc_broadcast_addr(values['IP'], values['sub_mask']))
                 window.Element('net_addr').Update(IP_Func.calc_network_addr(values['IP'], values['sub_mask']))
                 window.Element('host_range').Update(IP_Func.calc_host_range(values['IP'], values['sub_mask']))
